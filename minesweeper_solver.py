@@ -3,13 +3,18 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
-def openMineSweeper():
-    chrome_options = Options()
-    chrome_options.add_experimental_option("detach", True)
+chrome_options = Options()
+chrome_options.add_experimental_option("detach", True)
 
-    driver = webdriver.Chrome(options=chrome_options)
+driver = webdriver.Chrome(options=chrome_options)
+
+def cookieNotConsent():
+    notConsentButton = driver.find_element(By.CLASS_NAME, "fc-cta-do-not-consent")
+    notConsentButton.click()
+
+def openMineSweeper():
     driver.get("https://minesweeperonline.com")
-    element = driver.find_element(By.ID, "1_1")
-    print(element)
+    cookieNotConsent()
+    
 
 openMineSweeper()
