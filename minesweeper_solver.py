@@ -1,3 +1,4 @@
+import math
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -13,8 +14,13 @@ def cookieNotConsent():
     notConsentButton.click()
 
 def openMineSweeper():
-    driver.get("https://minesweeperonline.com")
+    driver.get("https://minesweeperonline.com/#beginner")
     cookieNotConsent()
-    
+
+# SOLVER
+def solve(x:int, y:int):
+    middle = (math.ceil(x/2), math.ceil(y/2))
+    print(middle)
 
 openMineSweeper()
+solve(9, 9)
