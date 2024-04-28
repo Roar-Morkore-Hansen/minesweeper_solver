@@ -4,10 +4,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
-# chrome_options = Options()
-# chrome_options.add_experimental_option("detach", True)
+chrome_options = Options()
+chrome_options.add_experimental_option("detach", True)
 
-# driver = webdriver.Chrome(options=chrome_options)
+driver = webdriver.Chrome(options=chrome_options)
 
 def cookieNotConsent():
     notConsentButton = driver.find_element(By.CLASS_NAME, "fc-cta-do-not-consent")
@@ -16,6 +16,20 @@ def cookieNotConsent():
 def openMineSweeper():
     driver.get("https://minesweeperonline.com/#beginner")
     cookieNotConsent()
+
+
+class Coordinate:
+    def __init__(self, x:int, y:int):
+        self.x = x
+        self.y = y
+        self.id = f'{self.x}_{self.y}'
+
+class AdjacentCells:
+    def __init__(self, numBlanks:int, listBlanks:list[Coordinate], numFlagged:int):
+        self.numBlanks = numBlanks
+        self.listBlakns = listBlanks
+        self.numFlagged = numFlagged
+        
 
 def createMatrix(x:int, y:int):
     matrix = list()
@@ -28,23 +42,42 @@ def createMatrix(x:int, y:int):
 
 # SOLVER
 
-def OOBfilter(coordinate):
-    x = coordinate[0]
-    y = coordinate[1]
-    OOB_x = (x < 1 or x > size_x)
-    OOB_y = (y < 1 or y > size_y)
+def OOBfilter(coord) -> bool:
+    OOB_x = (coord.x < 1 or coord.x > size_x)
+    OOB_y = (coord.y < 1 or coord.y > size_y)
     if (OOB_x or OOB_y) == True:
         return False
     else:
         return True
 
-def getCandidates(x:int, y:int):
-    candidateList = [(x, y - 1), (x + 1, y - 1), (x + 1, y), (x + 1, y + 1), (x, y + 1),
-                     (x - 1, y + 1), (x - 1, y), (x - 1, y - 1)]
+def getCandidates(coord:Coordinate) -> list[Coordinate]:
+    candidateList = [Coordinate(coord.x, coord.y - 1), Coordinate(coord.x + 1, coord.y - 1), 
+                     Coordinate(coord.x + 1, coord.y), Coordinate(coord.x + 1, coord.y + 1), 
+                     Coordinate(coord.x, coord.y + 1), Coordinate(coord.x - 1, coord.y + 1), 
+                     Coordinate(coord.x - 1, coord.y), Coordinate(coord.x - 1, coord.y - 1)]
     return list(filter(OOBfilter, candidateList))
 
-def checkBoarder(x:int, y:int):
-    print(getCandidates(x, y))
+def getCellState(coord:Coordinate):
+    print(driver.find_element(By.ID, f'{coord.x}_{coord.y}').get_attribute("CLASS"))
+
+def checkAdjCells(coord:Coordinate) -> AdjacentCells:
+    print(getCandidates(coord))
+
+    numBlanks = 0
+    listBlanks = []
+    numFlagged = 0
+
+    for candCoord in getCandidates(coord):
+        candState = getCellState(candCoord)
+        if candState == "square bombflagged":
+            numFlagged += 1
+        elif candState == "square blank":
+            numBlanks += 1
+            listBlanks.append(coord)
+        else:
+            pass
+        return AdjacentCells(numBlanks, listBlanks, numFlagged)
+
 
 def solve(x:int, y:int):
     global size_x
@@ -53,11 +86,19 @@ def solve(x:int, y:int):
     size_y = y
     # driver.find_element(By.ID, math.ceil(x/2), math.ceil(y/2)).click()
 
-# openMineSweeper()
-# solve(9, 9)
-# createMatrix(9,9)
+    #While loop trough grid
+    # end stop when id face == class facewin or id face == class facedead
+
+    # WHAT ACTION
+    # flag as bomb if numBombs - numFlagged == numBlanks
+    # click blanks if numBombs - numFlagged == 0
+    # pass
+
+openMineSweeper()
 
 size_x = 9
 size_y = 9
 
-checkBoarder(9,9)
+getCellInfo(1,1)
+
+
