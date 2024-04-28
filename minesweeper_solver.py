@@ -58,11 +58,15 @@ def getCandidates(coord:Coordinate) -> list[Coordinate]:
     return list(filter(OOBfilter, candidateList))
 
 def getCellState(coord:Coordinate):
-    print(driver.find_element(By.ID, f'{coord.x}_{coord.y}').get_attribute("CLASS"))
+    cellClass = driver.find_element(By.ID, f'{coord.x}_{coord.y}').get_attribute("CLASS")
+    cellState = cellClass.split(" ")[-1]
+    lastChar = cellClass[-1]
+    if lastChar.isdecimal():
+        return int(lastChar)
+    else:
+        return cellState
 
 def checkAdjCells(coord:Coordinate) -> AdjacentCells:
-    print(getCandidates(coord))
-
     numBlanks = 0
     listBlanks = []
     numFlagged = 0
