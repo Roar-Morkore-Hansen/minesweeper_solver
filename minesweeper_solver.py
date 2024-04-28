@@ -2,12 +2,15 @@ import math
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
 
 chrome_options = Options()
 chrome_options.add_experimental_option("detach", True)
 
 driver = webdriver.Chrome(options=chrome_options)
+actionChains = ActionChains(driver)
+
 
 def cookieNotConsent():
     notConsentButton = driver.find_element(By.CLASS_NAME, "fc-cta-do-not-consent")
@@ -83,26 +86,61 @@ def checkAdjCells(coord:Coordinate) -> AdjacentCells:
         return AdjacentCells(numBlanks, listBlanks, numFlagged)
 
 
-def solve(x:int, y:int):
+def getElementByCoordinate(coord:Coordinate):
+    return driver.find_element(By.ID, f'{coord.x}_{coord.y}')
+
+def click(coord:Coordinate):
+    element = getElementByCoordinate(coord)
+    element.click()
+
+def flag(coord:Coordinate):
+    element = getElementByCoordinate(coord)
+    ActionChains(driver)\
+            .context_click(element)\
+            .perform()
+
+def checkNumCell(numBombs:int, coord:Coordinate):
+    adjcells = checkAdjCells(coord)
+    numFlagged = adjcells.numFlagged
+    numBlanks = adjcells.numBlanks
+
+    if (numBombs - numFlagged == numBlanks):
+        for blankCoord in adjcells.listBlakns:
+            flag(blankCoord)
+    elif (numBombs - numFlagged == 0):
+        for blankCoord in adjcells.listBlakns:
+            click(blankCoord)
+     
+
+def solve():
     global size_x
     global size_y
-    size_x = x
-    size_y = y
-    # driver.find_element(By.ID, math.ceil(x/2), math.ceil(y/2)).click()
+    # Click middle val
+    driver.find_element(By.ID, math.ceil(size_x/2), math.ceil(size_y/2)).click()
 
     #While loop trough grid
     # end stop when id face == class facewin or id face == class facedead
 
-    # WHAT ACTION
-    # flag as bomb if numBombs - numFlagged == numBlanks
-    # click blanks if numBombs - numFlagged == 0
-    # pass
+    faceStatus = driver.find_element(By.ID, "face").get_attribute("CLASS")
+
+    x = 0
+    y = 0
+    while faceStatus == "facesmile":
+        while faceStatus == "facesmile":
+            coord = Coordinate(x%size_x + 1, y%size_y + 1)
+            cellState = getCellState(coord)
+            if (isinstance(cellState, int)):
+                checkNumCell(cellState, coord)
+            #iterate
+            x += 1
+        y += 1
+
 
 openMineSweeper()
 
+click(Coordinate(5,5))
+
 size_x = 9
 size_y = 9
-
-getCellInfo(1,1)
 
 
