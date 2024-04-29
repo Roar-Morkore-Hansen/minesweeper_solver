@@ -13,7 +13,7 @@ The program offers two main actions: flagging and clicking.
 - **Clicking**: All the blank adjacent cells are clicked if the number of bombs is equal to the number of flagged cells. This indicates that there can be no bombs in the remaining cells.
 
 ## Implementation
-The program uses Selenium to interact with the Minesweeper game at minesweeperonline.com. It iterates through every cell from top left to bottom right and checks the adjacent cells of all numbered cells, using the flag or click algorithm on them accordingly.
+The program uses Selenium to interact with the Minesweeper game at minesweeperonline.com. It iterates through every cell from top left to bottom right and checks the adjacent cells of all numbered cells, using the flag or click algorithm to determin if what action should be taken.
 
 ## Evaluation
 This implementation serves as a good first iteration, but it has certain limitations. One issue is the potential for deadlock. Future implementations should address this issue by:
@@ -24,6 +24,7 @@ This implementation serves as a good first iteration, but it has certain limitat
 Testing procedures should also be added to ensure the robustness of the program. Additionally, there is a known issue where the program crashes when the Minesweeper game is completed, which needs to be addressed in future updates. 
 
 ## Future Improvements
+- Handle deadlocks by clicking random cells.
 - Implement a recursive depth-first solving algorithm.
 - Optimize the algorithm to skip checking cells without adjacent blank spaces.
 - Add testing procedures to ensure robustness.
