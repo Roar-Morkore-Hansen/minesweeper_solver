@@ -19,7 +19,6 @@ The program uses Selenium to interact with the Minesweeper game at minesweeperon
 This implementation serves as a good first iteration, but it has certain limitations. One issue is the potential for deadlock. Future implementations should address this issue by:
 
 - Implementing a recursive depth-first solving algorithm instead of the brute-force method of iterating through the grid.
-- Implement deadlock detection and a way to break deadlock by clicking on a onsertain tile.
 - Optimizing the algorithm to skip checking cells that don't have any adjacent blank spaces.
 
 Testing procedures should also be added to ensure the robustness of the program. Additionally, there is a known issue where the program crashes when the Minesweeper game is completed, which needs to be addressed in future updates. 
